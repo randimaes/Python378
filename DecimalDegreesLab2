@@ -1,0 +1,72 @@
+
+lab2part1-3 2.py
+lab2_finished
+·
+Updated Oct 5, 2022 by RANDI SELVEY
+
+
+
+Open
+Download
+
+
+Share
+
+'''
+This function takes the inputs of degrees, minutes, and seconds, and converts it do decimal degrees
+'''
+
+def conv(D, M, S):
+        D=float(D)
+        M=float(M)
+        S=float(S)
+        if D< 0:                #conditional statement to make minutes and seconds negative if degrees is
+                M=-M
+                S=-S
+        
+        elif D>0:
+                M=M
+                S=S
+        dd= D+(M/60)+(S/3600)  #equation that changes minutes and seconds to degrees
+        
+        return dd
+
+#above is question 1
+#below is question 2
+
+'''
+This function takes the input of decimal degrees and gives an output of degrees, minutes, and seconds
+'''
+
+def ddtodms(dd):
+        dd=float(dd)
+        degrees= int(dd)
+        minutes= (float(dd)-int(dd))*60
+        seconds= (float(minutes)-int(minutes))*60
+        if degrees<0:                   #conditional statement that ensures a negative return value if DD is negative and positive minutes and seconds 
+                minutes=abs(minutes)            
+                seconds=abs(seconds)
+
+        return(degrees, minutes, seconds)
+
+'''
+This function allows for user input and calls on the above funtions. A conditional statement is used in order to differentiate data types provided by user (DD or DMS) 
+'''
+def main():
+        userinput= input("Please enter a latitude or longitude value in DMS or DD format. \n")
+        if "," in userinput:
+                print("The user value is in DMS form")
+                dmslist=userinput.split(",")
+                dd=conv(float(dmslist[0]), float(dmslist[1]), float(dmslist[2]))
+                print("Its DD form is ", str(dd), " .")
+                
+        elif "," not in userinput:
+                print ("The user value is in DD form")
+                dms=ddtodms(float(userinput))
+                print("Its DMS form is ", dms[0], " ", dms[1], " ", dms[2], " .")
+                
+#
+main()
+
+
+
