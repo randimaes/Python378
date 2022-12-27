@@ -1,0 +1,27 @@
+#Task 1
+#reads in the contents of CityPop.csv and stores the data in a container
+
+CityPop= []
+
+def readandstore():
+    filename="CityPop.csv"
+    f=open(filename, "r")
+    header=f.readline() #skips first row that appears in excel doc
+    while True:         #
+        line=f.readline()
+        if len(line)==0:
+            break
+        record=line.strip().split(",")
+        CityPop.append(record)  #adds items in CityPop to list container
+    f.close()
+    
+readandstore()
+print(CityPop)
+
+
+#Task 2
+#Prompting user for city and year
+
+def citycheck():
+    for i in (0, len(CityPop):
+              if Citypop(i)[4]
