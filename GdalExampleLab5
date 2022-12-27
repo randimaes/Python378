@@ -1,0 +1,112 @@
+from osgeo import gdal
+import numpy
+import matplotlib.pyplot as plt
+from osgeo import osr
+
+
+
+#create a function
+def array2raster(newRasterFileName,rasterOrigin,pixelWidth,pixelHeight,array):
+    #Step 1-- choose a driver
+    outformat = 'GTiff'
+    outDriver = gdal.GetDriverByName(outformat)
+
+    #Step 2 -- Create output dataset using that driver
+    rows  = array.shape[0]
+    cols    = array.shape[1]
+    print ('rows: ', rows, ' cols: ', cols)
+    nBands   = 1
+    dataType = gdal.GDT_Float32
+    dsOut=outDriver.Create(newRasterFileName,cols,rows,nBands,dataType)
+
+    #Step 3 -- Set Geotransform  DO I NEED THIS?
+    xCorner=rasterOrigin[0]
+    yCorner=rasterOrigin[1]
+    xOffset=0
+    yOffset=0
+    geoT = [ xCorner, pixelWidth, xOffset, yCorner, yOffset, -pixelHeight]
+    dsOut.SetGeoTransform( geoT )
+
+    #Step 4 -- Set Projection
+    mySrs = osr.SpatialReference()
+    #mySrs.SetWellKnownGeogCS("WGS84")
+    mySrs.ImportFromEPSG(4326) #WGS84 http://spatialreference.org/ref/epsg/
+    myWKT = mySrs.ExportToWkt()
+    #print myWKT
+    dsOut.SetProjection(myWKT)
+
+    #Step 5 -- Process Each Band
+    outband = dsOut.GetRasterBand(1)
+    outband.SetColorInterpretation(gdal.GCI_Undefined)
+    outband.WriteArray(array)
+    outband.FlushCache()
+
+    #Step 6 -- Close the output data
+    dsOut=None
+
+## the main function
+if __name__ == "__main__":
+
+   #read raster data; you might need to change the directory if the path is different
+   dataset1 =gdal.Open('L71026029_02920000609_B30_CLIP.TIF',gdal.GA_ReadOnly) #CHANGE TO OUR FILES
+   dataset2 =gdal.Open('L71026029_02920000609_B40_CLIP.TIF',gdal.GA_ReadOnly) #CHANGE TO OUR FILES
+   #how do I get near IR band 4 ( _B40_ ) and RED ( _B30_ )
+   '''
+   # Assign file names to variables.
+   redFile = 'L71026029_02920000609_B30_CLIP.tif' #CHANGE
+   nirFile = 'L71026029_02920000609_B40_CLIP.tif' #CHANGE
+   '''
+   # Create two objects from two files.
+   if dataset1 is None:
+      print ("Couldn't open")
+      exit(1)
+
+   if dataset2 is None:
+      print ("Couldn't open")
+      exit(1)
+
+   #read Raster data as two-dimensional array (think like a list)
+   redBand=dataset1.ReadAsArray().astype(float)
+   nirBand=dataset2.ReadAsArray().astype(float)
+      #array[array<0]=0
+   print ('cols: ',dataset1.RasterXSize, 'rows: ',dataset1.RasterYSize)
+   '''
+   #basic info for the driver
+   print (dataset1.GetDriver().ShortName)
+   print (dataset1.GetDriver().LongName)
+   #get the Metadata if it has
+   print (dataset.GetMetadata())
+'''
+   #Get the number of columns and rows
+   cols = dataset1.RasterXSize
+   rows = dataset1.RasterYSize
+   print ('numbers of rows and columns:',rows,cols)
+
+   '''
+         #Fetch the number of raster bands on this dataset.
+      band_count=dataset1.RasterCount
+   '''
+   NDVIsubset= numpy.empty([rows, cols])
+
+   for row in range(0,cols): #change to (dataset.RasterYSize) if memory is large
+         for col in range(0,rows): #change to (dataset.RasterXSize) if memory is large
+               NDVIsubset[row,col] = (nirBand[row, col]-redBand[row, col])/ (nirBand[row, col]+redBand[row, col]) #change to given equation
+                
+   geotransform = dataset1.GetGeoTransform()
+   if geotransform:
+                  xOrigin = geotransform[0]
+                  yOrigin = geotransform[3]
+                  pixelWidth = geotransform[1]
+                  pixelHeight = geotransform[5]
+                  print ("Origin = ({}, {})", xOrigin, yOrigin)
+                  print ("Pixel Size = ({}, {})", pixelWidth,pixelHeight)
+
+
+
+
+
+   array2raster("NDVI.tif",(xOrigin, yOrigin),pixelWidth,pixelHeight,NDVIsubset)
+   dataset1= None
+   dataset2= None
+
+print ("\nNVDI.tif file has been created.\n")
