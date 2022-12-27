@@ -1,0 +1,21 @@
+import arcpy
+arcpy.env.workspace = r"C:\Users\rselvey\Desktop\lab7\lab7.gdb"  
+arcpy.env.overwriteOutput = True #set overwrite permission if new file exists
+
+fc='powerline.shp'
+fc_polygon='parcels.shp'
+#MakeFeatureLayer_management creates a feature layer from an input feature class or layer file.
+#The layer that is created by the tool is temporary and will not persist after the session ends unless the layer is saved to disk or the map document is saved
+arcpy.MakeFeatureLayer_management(fc,"feature_lyr")
+arcpy.MakeFeatureLayer_management(fc_polygon,"select_lyr")
+
+#Select feature by location syntax:
+#Syntax: SelectLayerByLocation_management (in_layer, {overlap_type}, {select_features}, {search_distance}, {selection_type})
+arcpy.SelectLayerByLocation_management("feature_lyr","WITHIN","select_lyr",250,"NEW_SELECTION")
+
+# create output feature class 
+sr = arcpy.Describe("feature_lyr").spatialReference
+#http://pro.arcgis.com/en/pro-app/tool-reference/data-management/create-feature-class.htm
+arcpy.CreateFeatureclass_management(out_path=arcpy.env.workspace,out_name="feature_intersect",geometry_type="Point",template=fc,has_m="SAME_AS_TEMPLATE",has_z="SAME_AS_TEMPLATE",spatial_reference=sr)
+#add selection to output feature class
+arcpy.Append_management("feature_lyr","feature_intersect")
