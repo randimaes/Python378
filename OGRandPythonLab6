@@ -1,0 +1,136 @@
+from osgeo import gdal, ogr
+
+import sys
+
+import math
+
+
+
+filename = 'Powerline.shp'
+
+#open dataset
+
+driver = ogr.GetDriverByName('ESRI Shapefile')
+
+dataSource = driver.Open(filename, gdal.GA_ReadOnly)
+
+dataSource2= driver2.Open(filename, gdal.GA_ReadOnly)
+
+#if data source is empty exit
+
+if dataSource is None:
+
+    print('Failed to open file')
+
+    sys.exit(1)
+
+#find number of features in layer
+
+layer= dataSource.GetLayer(0)
+
+
+
+distance = 0
+
+
+
+featureCount = layer.GetFeatureCount()
+
+for i in range(0,featureCount):
+
+  feature  = layer.GetFeature(i)
+
+  geometry = feature.GetGeometryRef()
+
+  nPts=geometry.GetPointCount()
+
+  
+
+  for i in range(0,nPts -1):
+
+   point1=geometry.GetPoint(i)
+
+   x1=float(point1[0])
+
+   y1=float(point1[1])
+
+  
+
+   point2=geometry.GetPoint(i+1)
+
+   x2=float(point2[0])
+
+   y2=float(point2[1])
+
+            
+
+   xDistance = float((x1-x2) * (x1-x2))
+
+   yDistance = float((y1-y2) * (y1-y2))
+
+   distBetweenPoints=math.sqrt(xDistance+yDistance)
+
+   distance= distance + distBetweenPoints
+
+#convert distance in feet to miles
+
+DistanceinMiles=distance/5280
+
+print(DistanceinMiles)
+
+
+#End of Task 1
+
+#Start of Task 2
+
+filename = 'Parcels.shp'
+
+
+
+driver = ogr.GetDriverByName('ESRI Shapefile')
+
+dataSource = driver.Open(filename, gdal.GA_ReadOnly)
+
+
+
+if dataSource2 is None:
+
+    print('Failed to open file')
+
+    sys.exit(1)
+
+
+
+    
+
+layer= dataSource.GetLayer(0)
+
+FeatureCount=layer.GetFeatureCount()
+
+
+
+layername=layer.GetName()
+
+layertypeInt=layer.GetGeomType()
+
+layerTypeStr = ogr.GeometryTypeToName(layerTypeInt)
+
+featureCount = layer.GetFeatureCount()
+
+fieldCount = featureDefn.GetFieldCount()
+
+
+
+for i in range(FeatureCount):
+
+    feature= layer.GetFeature
+
+    featureDefn = layer.GetLayerDefn()
+
+    fieldCount = featureDefn.GetFieldCount()
+
+    
+
+    values = ()
+
+    print(values)
