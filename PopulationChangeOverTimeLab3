@@ -1,0 +1,62 @@
+# Task 1
+# reads the contents of CityPop.csv, storing data in a dictionary
+import csv
+from typing import List
+
+container = dict()
+lines = open("CityPop.csv", "r")
+header = lines.readline()
+for line in lines:
+    fields = line.strip().split(",")  #splitting attributes by comma
+    ID = fields[0]
+    lat = float(fields[1])  # converting number of lat/lon and population values into floats
+    lon = float(fields[2])
+    city = fields[4]
+    label = fields[4]
+    yr1970 = float(fields[5])
+    yr1975 = float(fields[6])
+    yr1980 = float(fields[7])
+    yr1985 = float(fields[8])
+    yr1990 = float(fields[9])
+    yr1995 = float(fields[10])
+    yr2000 = float(fields[11])
+    yr2005 = float(fields[12])
+    yr2010 = float(fields[13])
+    container[city] = {"city": city, "ID": ID, "lat": lat, "lon": lon, "label": label, "yr1970": yr1970,
+                       "yr1975": yr1975, "yr1980": yr1980, "yr1985": yr1985, "yr1990": yr1990, "yr1995": yr1995,
+                       "yr2000": yr2000, "yr2005": yr2005, "yr2010": yr2010}
+lines.close()
+
+
+# Task 4
+# calculate population change over two years.
+
+
+list = ["yr1970", "yr1975", "yr1980", "yr1985", "yr1990", "yr1995", "yr2000", "yr2005",
+        "yr2010"]  # creating a list of possible years. I used this in user input loop
+yearone = input("Please enter year")        #while loop created to take input from user and error if the year entered is not in list
+while yearone not in list:
+    print("Year not available. Please try again. (Options: yr1970, yr1975, yr1980, yr1985..yr2010. \n")
+    yearone = input()
+
+yeartwo = input("Please Enter Year Two \n")
+while yeartwo not in list:
+    print("Year not available. Please try again. (Options: yr1970, yr1975, yr1980, yr1985..yr2010. \n")
+    yeartwo = input()
+# now I have two user inputs for year. I need to create a loop to connect to all cities in CSV
+
+
+with open('test.csv', 'w', newline='') as file:     #opening csv file to save into
+    writer = csv.writer(file)
+    writer.writerow(["ID", "City", "Population Change"]) #naming the rows in my csv
+    for city in container.keys():
+    # container.get(city).get(yearone)
+        population1 = container.get(city).get(yearone)
+    # container.get(city).get(yeartwo)
+        population2 = container.get(city).get(yeartwo)
+        difference = abs(population2 -population1)  #using absolute value to find change
+        id = container.get(city).get("ID")
+        id = str(id)
+        city = str(city)
+        difference = str(difference)
+        writer.writerow([id,city,difference]) #writes data into csv rows
