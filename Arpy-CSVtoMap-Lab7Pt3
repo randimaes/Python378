@@ -1,0 +1,15 @@
+import arcpy
+
+arcpy.env.workspace = r"C:\Users\rselvey\Desktop\lab7"
+
+arcpy.env.overwriteOutput = True
+
+ref = "C:/Users/rselvey/Desktop/lab7/ne_110m_admin_0_countries_lakes.shp"
+filename = "all_week.csv"
+sr =arcpy.Describe(ref).spatialReference 
+
+arcpy.management.MakeXYEventLayer(filename, "longitude", "latitude", "map_layer", sr)
+
+arcpy.analysis.Select("map_layer", "map_layer_selected", "\"mag\" >= 3.0")
+join_layer = "join_layer"
+arcpy.analysis.SpatialJoin(ref, "map_layer_selected",join_layer, "JOIN_ONE_TO_ONE", "KEEP_COMMON", "CONTAINS")
