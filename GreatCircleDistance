@@ -1,0 +1,27 @@
+#{this program calculates the distance between any two points on the Earth's surface, given their latitude and longitude}
+
+import math
+
+print ("this program calculates the distance between any two points on the Earth's surface, given their latitude and longitude")
+
+#[allows user to input latitude and longitude info]
+localonelatitude = input ("Please enter the latitude of location one")
+localonelongitude = input ("Please enter the longitude of location one")
+localtwolatitude = input ("Please enter the latitude of location two")
+localtwolongitude = input ("Please enter the longitude of location two") 
+
+#[converts data to float type to get a more precise answer]
+localonelatitude = float(localonelatitude)
+localonelongitude = float(localonelongitude)
+localtwolatitude = float(localtwolatitude)
+localtwolongitude = float(localtwolongitude)
+
+#{converts degrees to radians}
+localonelatitude = math.radians(localonelatitude)
+localonelongitude = math.radians(localonelongitude)
+localtwolatitude = math.radians(localtwolatitude)
+localtwolongitude = math.radians(localtwolongitude)
+
+distance = 6300 * math.acos (math.sin(localonelatitude)*math.sin(localtwolatitude) + math.cos(localonelatitude)*math.cos(localtwolatitude)*math.cos(localonelongitude - localtwolongitude))
+distance = round(distance)
+print ("The distance between the two locations is", distance)
